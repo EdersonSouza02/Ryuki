@@ -1,0 +1,31 @@
+{
+  "name": "ryuki",
+  "version": "0.1.0",
+  "description": "Assistente de pesquisa no terminal usando Firecrawl",
+  "type": "module",
+  "bin": {
+    "ryuki": "bin/ryuki.js"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "EdersonSouza02",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdersonSouza02/ryuki.git"
+  },
+  "homepage": "https://github.com/EdersonSouza02/ryuki#readme",
+  "bugs": {
+    "url": "https://github.com/EdersonSouza02/ryuki/issues"
+  },
+  "keywords": [
+    "cli",
+    "firecrawl",
+    "search"
+  ]
+}
