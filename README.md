@@ -5,10 +5,10 @@ Assistente de pesquisa no terminal. Você pergunta, ele busca na web via [Firecr
 ## Uso rápido (sem instalar nada)
 
 ```bash
-npx github:EdersonSouza02/ryuki
+npx ryuki
 ```
 
-## Instalação permanente (depois de publicado no npm)
+## Instalação permanente
 
 ```bash
 npm install -g ryuki
