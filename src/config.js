@@ -1,7 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { createInterface } from "node:readline/promises";
 
 const CONFIG_DIR = join(homedir(), ".config", "ryuki");
 const CONFIG_PATH = join(CONFIG_DIR, "config.json");
@@ -20,14 +19,15 @@ function saveConfigFile(config) {
   writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
 }
 
-async function promptForKey(rl, label, signupUrl) {
+async function promptForKey(lines, label, signupUrl) {
   console.log(`\n${label} não encontrada.`);
   console.log(`Crie uma gratuitamente em: ${signupUrl}`);
-  const value = await rl.question(`Cole sua chave aqui: `);
-  return value.trim();
+  process.stdout.write("Cole sua chave aqui: ");
+  const { value, done } = await lines.next();
+  return done ? "" : value.trim();
 }
 
-export async function loadConfig() {
+export async function loadConfig(lines) {
   const fileConfig = readConfigFile();
 
   let firecrawlKey = process.env.FIRECRAWL_API_KEY || fileConfig.firecrawlApiKey;
@@ -36,12 +36,7 @@ export async function loadConfig() {
     return { firecrawlKey };
   }
 
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  try {
-    firecrawlKey = await promptForKey(rl, "Chave da Firecrawl", "https://www.firecrawl.dev");
-  } finally {
-    rl.close();
-  }
+  firecrawlKey = await promptForKey(lines, "Chave da Firecrawl", "https://www.firecrawl.dev");
 
   saveConfigFile({ firecrawlApiKey: firecrawlKey });
   console.log(`\nChave salva em ${CONFIG_PATH}\n`);

@@ -15,20 +15,19 @@ function printResults(results) {
 }
 
 export async function runRepl() {
-  const { firecrawlKey } = await loadConfig();
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  const lines = rl[Symbol.asyncIterator]();
+
+  const { firecrawlKey } = await loadConfig(lines);
 
   console.log("ryuki — assistente de pesquisa. Digite sua pergunta (ou 'sair' para encerrar).\n");
 
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-
   while (true) {
-    let question;
-    try {
-      question = (await rl.question("ryuki> ")).trim();
-    } catch {
-      break; // stdin fechou (ex: Ctrl+D ou entrada não interativa)
-    }
+    process.stdout.write("ryuki> ");
+    const { value, done } = await lines.next();
+    if (done) break; // stdin fechou (ex: Ctrl+D ou entrada não interativa)
 
+    const question = value.trim();
     if (!question) continue;
     if (EXIT_COMMANDS.has(question.toLowerCase())) break;
 
