@@ -5,11 +5,9 @@ export async function search(query, apiKey, limit = 6) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({
-      query,
-      limit,
-      scrapeOptions: { formats: ["markdown"] },
-    }),
+    // Sem scrapeOptions: só busca (sem renderizar/extrair cada página inteira),
+    // o que deixa a resposta bem mais rápida.
+    body: JSON.stringify({ query, limit }),
   });
 
   if (!response.ok) {
@@ -25,6 +23,6 @@ export async function search(query, apiKey, limit = 6) {
   return (payload.data || []).map((item) => ({
     url: item.url,
     title: item.title,
-    content: item.markdown || item.description || "",
+    content: item.description || "",
   }));
 }
