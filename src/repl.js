@@ -2,6 +2,7 @@ import { createInterface } from "node:readline/promises";
 import { loadConfig } from "./config.js";
 import { search } from "./firecrawl.js";
 import { bold, cyan, gray, snippet } from "./format.js";
+import { banner } from "./banner.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
 
@@ -20,7 +21,8 @@ export async function runRepl() {
 
   const { firecrawlKey } = await loadConfig(lines);
 
-  console.log("ryuki — assistente de pesquisa. Digite sua pergunta (ou 'sair' para encerrar).\n");
+  console.log(banner());
+  console.log("Digite sua pergunta (ou 'sair' para encerrar).\n");
 
   while (true) {
     process.stdout.write("ryuki> ");
