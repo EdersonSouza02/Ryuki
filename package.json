@@ -1,6 +1,6 @@
 {
   "name": "ryuki",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Assistente de pesquisa no terminal com respostas por IA, usando Firecrawl e Groq",
   "type": "module",
   "bin": {

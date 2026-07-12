@@ -40,11 +40,33 @@ export default function Releases() {
       <div className="max-w-4xl mx-auto px-6 py-20">
         <h1 className="text-5xl font-bold mb-8">Releases</h1>
 
+        {/* v0.3.3 */}
+        <Release
+          version="0.3.3"
+          date="12 Jul 2026"
+          status="latest"
+          features={[
+            { icon: '🦊', title: 'Logo da Raposa no README', desc: 'Mascote integrado no README com exibição no topo' },
+            { icon: '🌐', title: 'URL da Documentação', desc: 'Link atualizado para ryuki-docs.vercel.app em todas as referências' },
+            { icon: '📋', title: 'Releases Atualizadas', desc: 'Página de releases com todas as versões histórico de v0.3.3 até v0.1.0' },
+          ]}
+        />
+
+        {/* v0.3.2 */}
+        <Release
+          version="0.3.2"
+          date="12 Jul 2026"
+          features={[
+            { icon: '📚', title: 'Site de Documentação', desc: 'ryuki-docs.vercel.app com landing page, getting-started e releases' },
+            { icon: '🦊', title: 'Logo da Raposa', desc: 'Novo mascote integrado em todas as páginas do site e README' },
+            { icon: '📝', title: 'README Reformatado', desc: 'Padrão React npm com badges e links para documentação' },
+          ]}
+        />
+
         {/* v0.3.0 */}
         <Release
           version="0.3.0"
           date="12 Jul 2026"
-          status="latest"
           features={[
             { icon: '📥', title: 'Exportação de Respostas', desc: '/export markdown ou /export json — salva última resposta em ~/.config/ryuki/exports/' },
             { icon: '🎯', title: 'Modo Detalhado', desc: '/set detail=short|full — respostas resumidas (2-3 frases) ou completas' },
