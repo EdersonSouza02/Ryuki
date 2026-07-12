@@ -52,7 +52,7 @@ ryuki
 
 ## 📚 Documentation
 
-**Acesse a documentação completa em:** [**ryuki.dev**](https://ryuki.dev)
+**Acesse a documentação completa em:** [**ryuki-34a2yo040-ryuki1.vercel.app**](https://ryuki-34a2yo040-ryuki1.vercel.app)
 
 ## 💻 Modo Interativo
 
