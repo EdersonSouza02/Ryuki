@@ -1,4 +1,8 @@
+import { detectFreshness, buildQuery } from "./query.js";
+
 export async function search(query, apiKey, { limit = 6, lang = "pt", country = "br" } = {}) {
+  const tbs = detectFreshness(query);
+
   const response = await fetch("https://api.firecrawl.dev/v1/search", {
     method: "POST",
     headers: {
@@ -7,7 +11,13 @@ export async function search(query, apiKey, { limit = 6, lang = "pt", country = 
     },
     // Sem scrapeOptions: só busca (sem renderizar/extrair cada página inteira),
     // o que deixa a resposta bem mais rápida.
-    body: JSON.stringify({ query, limit, lang, country }),
+    body: JSON.stringify({
+      query: buildQuery(query),
+      limit,
+      lang,
+      country,
+      ...(tbs && { tbs }),
+    }),
   });
 
   if (!response.ok) {
