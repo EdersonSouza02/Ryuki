@@ -1,6 +1,8 @@
-# Ryuki
+# 🦊 Ryuki
 
 <div align="center">
+
+![Ryuki Logo](https://raw.githubusercontent.com/EdersonSouza02/ryuki/main/docs/public/ryuki-logo.svg)
 
 [![NPM Version](https://img.shields.io/npm/v/ryuki)](https://www.npmjs.com/package/ryuki)
 [![NPM Downloads](https://img.shields.io/npm/dm/ryuki)](https://www.npmjs.com/package/ryuki)
@@ -52,7 +54,7 @@ ryuki
 
 ## 📚 Documentation
 
-**Acesse a documentação completa em:** [**ryuki-34a2yo040-ryuki1.vercel.app**](https://ryuki-34a2yo040-ryuki1.vercel.app)
+**Acesse a documentação completa em:** [**ryuki-docs.vercel.app**](https://ryuki-docs.vercel.app)
 
 ## 💻 Modo Interativo
 
