@@ -1,12 +1,14 @@
 import { runConfigCommand } from "./configCommand.js";
 import { VERSION } from "./version.js";
 import { bold, gray } from "./format.js";
+import { selectModel } from "./interactiveInput.js";
 
 // Fonte única pros comandos: alimenta tanto o /help quanto o autocomplete
 // (Tab) do REPL, pra não ter duas listas que podem ficar desalinhadas.
 export const COMMANDS = [
   { name: "/config", description: "mostra quais chaves estão configuradas" },
   { name: "/config reset", description: "apaga as chaves salvas" },
+  { name: "/model", description: "escolhe entre kunai ou gear" },
   { name: "/kunai", description: "modelo rápido e mais direto" },
   { name: "/gear", description: "modelo padrão, respostas mais completas" },
   { name: "/version", description: "mostra a versão instalada" },
@@ -33,7 +35,7 @@ export function completer(line) {
 // Trata a linha como comando se começar com "/" (retorna true — nada mais
 // ambíguo com busca literal). "state" é mutado em memória (ex: state.fast)
 // pra comandos poderem afetar a sessão sem precisar reiniciar o REPL.
-export function handleCommand(question, state) {
+export async function handleCommand(question, state) {
   if (!question.startsWith("/")) return false;
 
   const [cmd, ...args] = question.split(" ");
@@ -42,6 +44,19 @@ export function handleCommand(question, state) {
     case "/config":
       runConfigCommand(args.map((a) => a.toLowerCase()));
       break;
+    case "/model": {
+      const chosen = await selectModel();
+      if (chosen) {
+        if (chosen === "kunai") {
+          state.fast = true;
+          console.log(gray("Modo kunai ativado: respostas mais rápidas e diretas pro resto da sessão."));
+        } else if (chosen === "gear") {
+          state.fast = false;
+          console.log(gray("Modo gear ativado: respostas mais completas pro resto da sessão."));
+        }
+      }
+      break;
+    }
     case "/kunai":
       state.fast = true;
       console.log(gray("Modo kunai ativado: respostas mais rápidas e diretas pro resto da sessão."));

@@ -120,7 +120,7 @@ export async function runRepl({ fast: initialFast = false } = {}) {
     console.log("");
 
     // Comandos começam com "/" — sem chance de confundir com busca literal.
-    if (handleCommand(question, state)) {
+    if (await handleCommand(question, state)) {
       console.log("");
       continue;
     }

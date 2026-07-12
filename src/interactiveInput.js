@@ -126,3 +126,61 @@ export function disableRawMode() {
   if (process.stdin.isTTY) process.stdin.setRawMode(false);
   process.stdin.pause();
 }
+
+export function selectModel() {
+  return new Promise((resolve) => {
+    const models = [
+      { name: "kunai", description: "modelo rápido e mais direto" },
+      { name: "gear", description: "modelo padrão, respostas mais completas" },
+    ];
+    let selected = 0;
+
+    function renderMenu() {
+      const menu = models
+        .map((m, i) => {
+          const active = i === selected;
+          const marker = active ? cyan("❯ ") : "  ";
+          const name = active ? bold(cyan(m.name)) : m.name;
+          return `${marker}${name}  ${gray(m.description)}`;
+        })
+        .join("\n");
+      process.stdout.write(`\n${menu}\n`);
+      process.stdout.write(`\x1b[${models.length + 1}A`);
+    }
+
+    function onKeypress(str, key) {
+      if (key.ctrl && key.name === "c") {
+        cleanup();
+        process.stdout.write("\x1b[0J\n");
+        resolve(null);
+        return;
+      }
+
+      if (key.name === "return") {
+        process.stdout.write("\x1b[0J\n");
+        cleanup();
+        resolve(models[selected].name);
+        return;
+      }
+
+      if (key.name === "up") {
+        selected = (selected - 1 + models.length) % models.length;
+        renderMenu();
+        return;
+      }
+
+      if (key.name === "down") {
+        selected = (selected + 1) % models.length;
+        renderMenu();
+        return;
+      }
+    }
+
+    function cleanup() {
+      process.stdin.off("keypress", onKeypress);
+    }
+
+    process.stdin.on("keypress", onKeypress);
+    renderMenu();
+  });
+}
