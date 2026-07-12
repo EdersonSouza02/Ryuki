@@ -1,147 +1,111 @@
-# ryuki
+# Ryuki
 
-Assistente de pesquisa no terminal. Você pergunta, ele busca na web via [Firecrawl](https://www.firecrawl.dev), gera uma resposta resumida com IA ([Groq](https://console.groq.com)) a partir dos resultados, e mostra a fonte de cada informação.
+<div align="center">
 
-## Uso rápido (sem instalar nada)
+[![NPM Version](https://img.shields.io/npm/v/ryuki)](https://www.npmjs.com/package/ryuki)
+[![NPM Downloads](https://img.shields.io/npm/dm/ryuki)](https://www.npmjs.com/package/ryuki)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Stars](https://img.shields.io/github/stars/EdersonSouza02/ryuki?style=social)](https://github.com/EdersonSouza02/ryuki)
+
+**Assistente de pesquisa no terminal com IA**
+
+Busca na web em tempo real • Respostas com IA • Histórico persistente • Exportável
+
+[📚 Documentation](#-documentation) • [🚀 Get Started](#-getting-started) • [💬 GitHub](#-github) • [🐛 Issues](https://github.com/EdersonSouza02/ryuki/issues)
+
+</div>
+
+---
+
+## ✨ Features
+
+- **⚡ Ultra Rápido** — Modo kunai (rápido) e gear (completo)
+- **🔍 Web em Tempo Real** — Busca com Firecrawl detecta perguntas recentes
+- **💾 Histórico Persistente** — Conversas salvas, `/search`, cache de 24h
+- **🎯 Configurável** — Temperature, tokens, idioma, modo detalhado
+- **📥 Exportável** — Salve respostas em Markdown ou JSON
+- **🎨 Visual Aprimorado** — Syntax highlighting, tabelas, menu interativo com Tab
+- **🔄 Follow-up Context** — Entende continuações como "qual é a diferença..."
+
+## 🚀 Getting Started
+
+### Quickstart (sem instalar)
 
 ```bash
 npx ryuki
 ```
 
-## Modo one-shot
-
-Pra uma pergunta rápida sem entrar no modo interativo:
+### One-shot (sem abrir REPL)
 
 ```bash
-ryuki "quais os maiores artilheiros da história da champions league"
+ryuki "quem ganhou a copa do mundo 2022?"
 ```
 
-## Linha de comando
-
-```bash
-ryuki                       # abre o modo interativo (REPL)
-ryuki "sua pergunta"        # busca e responde direto, sem abrir o REPL
-ryuki --fast "sua pergunta" # usa um modelo mais rápido (e mais direto) da Groq
-ryuki config                # mostra quais chaves estão configuradas
-ryuki config reset          # apaga as chaves salvas
-ryuki --help                # ajuda
-ryuki --version             # versão instalada
-```
-
-## Comandos no modo interativo
-
-Dentro do REPL, qualquer linha que começa com `/` é tratada como comando (nunca é enviada como busca):
-
-| Comando         | O que faz                                              |
-| --------------- | -------------------------------------------------------|
-| `/help`         | Lista os comandos disponíveis                          |
-| `/config`       | Mostra quais chaves estão configuradas                 |
-| `/config reset` | Apaga as chaves salvas                                 |
-| `/model`        | Menu interativo pra escolher entre **kunai** (rápido) ou **gear** (completo) |
-| `/search`       | Busca no histórico de conversas anteriores              |
-| `/set`          | Configura sessão: `temperature`, `maxTokens`, `language`, `showSources` |
-| `/clear-cache`  | Limpa o cache de buscas                                |
-| `/version`      | Mostra a versão instalada                               |
-
-Num terminal de verdade, digitar `/` já abre um menu com os comandos na hora — navega com ↑/↓, filtra digitando mais letras (ex: `/m` deixa `/model` e `/clear-c`), **Tab autocompleta**, Enter escolhe e Esc cancela. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
-
-Fora do menu (ou seja, quando a linha não começa com `/`), ↑/↓ recupera perguntas antigas do histórico, que fica salvo entre sessões.
-
-Digite `sair`, `exit` ou `quit` pra encerrar.
-
-## Instalação permanente
+### Instalar globalmente
 
 ```bash
 npm install -g ryuki
 ryuki
 ```
 
-> Se `npm install -g` der erro de permissão, prefira `npx ryuki` — não precisa instalar nada globalmente.
+> **Erro de permissão?** Use `npx ryuki` — não precisa instalar globalmente.
 
-## Solução de problemas
+## 📚 Documentation
 
-### `EACCES: permission denied` ao rodar `npm install -g ryuki`
+**Acesse a documentação completa em:** [**ryuki.dev**](https://ryuki.dev)
 
-Isso acontece porque o npm tenta instalar pacotes globais numa pasta do sistema (`/usr/local/lib/node_modules`), que em muitas instalações Linux (principalmente via `apt`) pertence ao root. Não é um problema específico do `ryuki` — acontece com qualquer pacote global nessas instalações.
+Lá você encontra:
+- [Getting Started](https://ryuki.dev/getting-started) — Setup das chaves, instalação, comandos
+- [Releases](https://ryuki.dev/releases) — Histórico de versões e features
 
-Duas formas de resolver:
-
-1. **Usar `npx ryuki`** em vez de instalar — nunca esbarra nesse problema, porque o `npx` usa um cache próprio do seu usuário.
-2. **Configurar o npm pra instalar pacotes globais numa pasta sua** (resolve de vez, sem precisar de `sudo`):
-   ```bash
-   mkdir -p ~/.npm-global
-   npm config set prefix '~/.npm-global'
-   echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
-   source ~/.bashrc
-   npm install -g ryuki
-   ```
-   Depois disso, `ryuki` funciona digitando só isso, sempre.
-
-### A resposta de IA não aparece, só a lista de fontes
-
-A Groq tem um limite de uso no plano gratuito (requisições por dia e tokens por minuto). Se você estourar o limite, o `ryuki` avisa (`resposta de IA indisponível: ...`) e continua funcionando normalmente, só sem a resposta sintetizada — a busca em si nunca para de funcionar por causa disso.
-
-## Exemplos de uso
-
-### No modo interativo:
+## 💻 Modo Interativo
 
 ```bash
-ryuki> notícias de IA de hoje
-# Busca, encontra fontes e responde com IA
-# Resposta é colorida com syntax highlighting se tiver código
+ryuki> o que é Python?
+# Busca e responde com IA
 
-ryuki> /model
-  ❯ /model     escolhe entre kunai ou gear
-# Seta para baixo, Enter para escolher gear
+ryuki> /set detail=short
+# Respostas resumidas (2-3 frases)
 
-ryuki> /search IA
-# Busca nas conversas anteriores por "IA"
+ryuki> qual a diferença pra JavaScript?
+# Entende o contexto anterior (follow-up)
 
-ryuki> /set temperature=0.5
-# Deixa respostas menos criativas
-
-ryuki> /clear-cache
-# Força nova busca mesmo se pergunta é repetida
+ryuki> /export markdown
+# Salva última resposta
 ```
 
-### Mode one-shot:
+### Comandos
+
+| Comando | O que faz |
+|---------|----------|
+| `/model` | Menu interativo: kunai (rápido) ou gear (completo) |
+| `/set detail=short\|full` | Modo detalhado |
+| `/export markdown\|json` | Exporta última resposta |
+| `/search termo` | Busca no histórico |
+| `/set temperature=0.5` | Ajusta criatividade |
+| `/config` | Mostra configurações |
+| `/help` | Lista de comandos |
+
+> Dica: Digite `/` pra ver menu com autocomplete via Tab
+
+## ⚙️ Configuration
+
+Na primeira execução, o Ryuki pede duas chaves gratuitas:
+
+1. **[Firecrawl](https://www.firecrawl.dev)** (busca na web)
+2. **[Groq](https://console.groq.com/keys)** (IA, 100k tokens/dia grátis)
+
+Salvas em `~/.config/ryuki/config.json` (permissão 0600).
+
+### Variáveis de ambiente
 
 ```bash
-ryuki --fast "qual é a capital da França"
-# Rápido, sem entrar no REPL
+export FIRECRAWL_API_KEY=your_key
+export GROQ_API_KEY=your_key
+ryuki
 ```
 
-## Configuração
-
-Na primeira execução, o `ryuki` pede duas chaves gratuitas e salva em `~/.config/ryuki/config.json` (arquivo com permissão restrita, `0600`, legível só pelo seu usuário):
-
-- **[Firecrawl](https://www.firecrawl.dev)** — usada pra buscar na web.
-- **[Groq](https://console.groq.com/keys)** — usada pra gerar a resposta resumida a partir dos resultados.
-
-Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variáveis de ambiente (`FIRECRAWL_API_KEY` e `GROQ_API_KEY`), que têm prioridade sobre o arquivo de configuração.
-
-## Novas features (v0.2.0)
-
-- 🎯 **Menu interativo `/model`** — escolha entre kunai (rápido) e gear (completo) com setas e Enter
-- 📚 **Histórico persistente** — `/search termo` busca em conversas anteriores salvas em `~/.config/ryuki/conversations/`
-- ⚡ **Cache de 24h** — mesmas perguntas retornam mais rápido, economizando API calls
-- 🎨 **Syntax highlighting** — código nas respostas é colorido (detecta Python, Java, JS, C++, SQL)
-- 📊 **Formatação de tabelas** — tabelas nas respostas ficam com bordas e alinhadas
-- ⚙️ **Configurações por sessão** — `/set temperature=0.7`, `/set language=en`, etc.
-- 🔄 **Retry automático** — falhas de rede/API retentam com backoff exponencial
-- ⌨️ **Autocomplete com Tab** — digita `/m` + Tab = `/model`
-- ⏱️ **Timer visual** — vê quanto tempo levou a busca e a resposta
-- 💡 **Error handling melhorado** — mensagens de erro amigáveis com sugestões
-
-## Como funciona
-
-1. Você digita uma pergunta no prompt `ryuki>` (ou passa direto como argumento, no modo one-shot).
-2. Ele busca na web via Firecrawl (`/v1/search`) — detecta automaticamente se a pergunta pede algo recente (ex: "hoje", "essa semana") pra priorizar resultados atuais, e evita domínios de redes sociais/vídeo que costumam ter pouco conteúdo textual útil.
-3. Os resultados são enviados pra Groq, que gera a resposta em português com citações `[1]`, `[2]`, etc. — o texto vai aparecendo em tempo real (streaming), sem esperar a resposta inteira ficar pronta.
-4. Mostra a resposta da IA, seguida da lista de fontes (título + link) usadas pra montá-la. Se a pergunta for sobre o próprio Ryuki (nome, criador, limitações), ele responde direto e não mostra fontes de busca.
-5. Digite `sair` para encerrar o modo interativo.
-
-## Desenvolvimento local
+## 🛠️ Development
 
 ```bash
 git clone https://github.com/EdersonSouza02/ryuki.git
@@ -150,6 +114,28 @@ npm install
 node bin/ryuki.js
 ```
 
-## Licença
+## 📦 Como Funciona
 
-MIT
+1. Você pergunta no terminal
+2. Ryuki busca na web via Firecrawl
+3. Groq sintetiza uma resposta em IA
+4. Respostas em streaming (tempo real)
+5. Mostra fontes usadas [1], [2], etc.
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Abra uma [issue](https://github.com/EdersonSouza02/ryuki/issues) ou faça um [pull request](https://github.com/EdersonSouza02/ryuki/pulls).
+
+## 📄 Licença
+
+MIT © [EdersonSouza02](https://github.com/EdersonSouza02)
+
+---
+
+<div align="center">
+
+Made with 💜 by [@EdersonSouza02](https://github.com/EdersonSouza02)
+
+[⬆ back to top](#ryuki)
+
+</div>
