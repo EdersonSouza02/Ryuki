@@ -78,7 +78,7 @@ export async function answerAndPrint(question, results, groqKey, { fast = false,
     }
   } catch (err) {
     if (!started) stopSpinner();
-    console.error(gray(`(resposta de IA indisponível: ${err.message})\n`));
+    printError(err);
     return { usedSources: true, response: "" }; // sem resposta de IA, mantém fontes visíveis
   }
 
