@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -40,7 +40,7 @@ export function searchHistory(query) {
   ensureDir();
 
   const results = [];
-  const files = require("node:fs").readdirSync(HISTORY_DIR);
+  const files = readdirSync(HISTORY_DIR);
 
   for (const file of files) {
     if (!file.endsWith(".jsonl")) continue;

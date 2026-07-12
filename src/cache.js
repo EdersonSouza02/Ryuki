@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
@@ -56,10 +56,10 @@ export function cacheResults(query, results) {
 
 export function clearCache() {
   ensureDir();
-  const files = require("node:fs").readdirSync(CACHE_DIR);
+  const files = readdirSync(CACHE_DIR);
   for (const file of files) {
     if (file.endsWith(".json")) {
-      require("node:fs").rmSync(join(CACHE_DIR, file));
+      rmSync(join(CACHE_DIR, file));
     }
   }
 }
