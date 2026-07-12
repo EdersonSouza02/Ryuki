@@ -14,6 +14,7 @@ import { createSessionConfig } from "./sessionConfig.js";
 import { retryWithBackoff } from "./retry.js";
 import { highlightCode } from "./highlight.js";
 import { formatTable } from "./tableFormatter.js";
+import { printError } from "./errors.js";
 
 function startTimer() {
   const startTime = Date.now();
@@ -175,7 +176,7 @@ export async function runRepl({ fast: initialFast = false } = {}) {
 
       if (usedSources) printResults(results);
     } catch (err) {
-      console.error(`Erro: ${err.message}\n`);
+      printError(err);
     }
   }
 

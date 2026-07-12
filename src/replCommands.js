@@ -5,6 +5,7 @@ import { selectModel } from "./interactiveInput.js";
 import { searchHistory } from "./conversation.js";
 import { clearCache } from "./cache.js";
 import { setSetting, printConfig } from "./sessionConfig.js";
+import { setTheme, getAvailableThemes } from "./themes.js";
 
 // Fonte única pros comandos: alimenta tanto o /help quanto o autocomplete
 // (Tab) do REPL, pra não ter duas listas que podem ficar desalinhadas.
@@ -15,6 +16,7 @@ export const COMMANDS = [
   { name: "/search", description: "busca no histórico de conversas" },
   { name: "/continue", description: "continua a resposta anterior" },
   { name: "/set", description: "configura temperatura, tokens, idioma" },
+  { name: "/theme", description: "muda o tema (default, dark, light, solarized)" },
   { name: "/clear-cache", description: "limpa o cache de buscas" },
   { name: "/version", description: "mostra a versão instalada" },
   { name: "/help", description: "mostra essa lista" },
@@ -92,6 +94,21 @@ export async function handleCommand(question, state) {
         printConfig(state.sessionConfig);
       } else {
         setSetting(state.sessionConfig, setting);
+      }
+      break;
+    }
+    case "/theme": {
+      const themeName = args[0];
+      if (!themeName) {
+        const available = getAvailableThemes();
+        console.log("Temas disponíveis: " + available.join(", "));
+        console.log(gray("Use: /theme <nome>"));
+        break;
+      }
+      if (setTheme(themeName)) {
+        console.log(gray(`Tema alterado para "${themeName}". Reabra o Ryuki para aplicar.`));
+      } else {
+        console.log(gray(`Tema "${themeName}" não encontrado.`));
       }
       break;
     }
