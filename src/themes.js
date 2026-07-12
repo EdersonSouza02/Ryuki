@@ -8,12 +8,12 @@ const THEME_FILE = join(THEMES_DIR, "theme.json");
 const DEFAULT_THEME = {
   name: "default",
   colors: {
-    prompt: "\x1b[36m", // cyan
-    success: "\x1b[32m", // green
-    error: "\x1b[31m", // red
-    warning: "\x1b[33m", // yellow
-    info: "\x1b[90m", // gray
-    highlight: "\x1b[1m\x1b[35m", // bright magenta
+    prompt: "\x1b[96m", // bright cyan
+    success: "\x1b[92m", // bright green
+    error: "\x1b[91m", // bright red
+    warning: "\x1b[93m", // bright yellow
+    info: "\x1b[94m", // bright blue
+    highlight: "\x1b[1m\x1b[95m", // bright magenta
     reset: "\x1b[0m",
   },
 };
@@ -22,36 +22,36 @@ const PRESET_THEMES = {
   dark: {
     name: "dark",
     colors: {
-      prompt: "\x1b[36m",
-      success: "\x1b[32m",
-      error: "\x1b[31m",
-      warning: "\x1b[33m",
-      info: "\x1b[90m",
-      highlight: "\x1b[1m\x1b[35m",
+      prompt: "\x1b[96m", // bright cyan
+      success: "\x1b[92m", // bright green
+      error: "\x1b[91m", // bright red
+      warning: "\x1b[93m", // bright yellow
+      info: "\x1b[94m", // bright blue
+      highlight: "\x1b[1m\x1b[95m", // bright magenta
       reset: "\x1b[0m",
     },
   },
   light: {
     name: "light",
     colors: {
-      prompt: "\x1b[34m", // blue
-      success: "\x1b[32m",
-      error: "\x1b[31m",
-      warning: "\x1b[33m",
+      prompt: "\x1b[34m", // dark blue
+      success: "\x1b[32m", // dark green
+      error: "\x1b[31m", // dark red
+      warning: "\x1b[33m", // dark yellow
       info: "\x1b[37m", // white
-      highlight: "\x1b[1m\x1b[35m",
+      highlight: "\x1b[1m\x1b[35m", // bold magenta
       reset: "\x1b[0m",
     },
   },
   solarized: {
     name: "solarized",
     colors: {
-      prompt: "\x1b[36m", // cyan
-      success: "\x1b[32m", // green
-      error: "\x1b[31m", // red
-      warning: "\x1b[33m", // yellow
-      info: "\x1b[90m", // gray
-      highlight: "\x1b[1m\x1b[36m", // bright cyan
+      prompt: "\x1b[96m", // bright cyan
+      success: "\x1b[92m", // bright green
+      error: "\x1b[91m", // bright red
+      warning: "\x1b[93m", // bright yellow
+      info: "\x1b[94m", // bright blue
+      highlight: "\x1b[1m\x1b[96m", // bright cyan
       reset: "\x1b[0m",
     },
   },
