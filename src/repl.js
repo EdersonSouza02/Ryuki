@@ -4,6 +4,7 @@ import { search } from "./firecrawl.js";
 import { synthesize } from "./groq.js";
 import { bold, gray, wrapText, truncate } from "./format.js";
 import { banner } from "./banner.js";
+import { withSpinner } from "./spinner.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
 
@@ -64,16 +65,17 @@ export async function runRepl() {
     if (!question) continue;
     if (EXIT_COMMANDS.has(question.toLowerCase())) break;
 
+    console.log("");
+
     try {
-      console.log("\nBuscando...\n");
-      const results = await search(question, firecrawlKey);
+      const results = await withSpinner("Buscando...", () => search(question, firecrawlKey));
 
       if (results.length === 0) {
         console.log("Nenhum resultado encontrado.\n");
         continue;
       }
 
-      const answer = await getAnswer(question, results, groqKey);
+      const answer = await withSpinner("Pensando...", () => getAnswer(question, results, groqKey));
       if (answer) printAnswer(answer);
 
       printResults(results);
