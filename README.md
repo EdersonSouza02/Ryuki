@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Ryuki Logo](https://raw.githubusercontent.com/EdersonSouza02/ryuki/main/docs/public/ryuki-logo.svg)
+<img src="https://raw.githubusercontent.com/EdersonSouza02/ryuki/main/docs/public/ryuki-logo.svg" width="120" alt="Ryuki Logo">
 
 [![NPM Version](https://img.shields.io/npm/v/ryuki)](https://www.npmjs.com/package/ryuki)
 [![NPM Downloads](https://img.shields.io/npm/dm/ryuki)](https://www.npmjs.com/package/ryuki)
