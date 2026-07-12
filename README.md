@@ -1,5 +1,3 @@
-# 🦊 Ryuki
-
 <div align="center">
 
 <img src="https://raw.githubusercontent.com/EdersonSouza02/ryuki/main/docs/public/ryuki-logo.svg" width="120" alt="Ryuki Logo">

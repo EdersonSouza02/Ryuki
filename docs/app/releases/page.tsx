@@ -40,11 +40,21 @@ export default function Releases() {
       <div className="max-w-4xl mx-auto px-6 py-20">
         <h1 className="text-5xl font-bold mb-8">Releases</h1>
 
+        {/* v0.3.4 */}
+        <Release
+          version="0.3.4"
+          date="12 Jul 2026"
+          status="latest"
+          features={[
+            { icon: '📝', title: 'README Melhorado', desc: 'Atualizações e refinamentos na documentação' },
+            { icon: '🦊', title: 'Logo Redimensionado', desc: 'Logo da raposa com tamanho otimizado (120px) no README' },
+          ]}
+        />
+
         {/* v0.3.3 */}
         <Release
           version="0.3.3"
           date="12 Jul 2026"
-          status="latest"
           features={[
             { icon: '🦊', title: 'Logo da Raposa no README', desc: 'Mascote integrado no README com exibição no topo' },
             { icon: '🌐', title: 'URL da Documentação', desc: 'Link atualizado para ryuki-docs.vercel.app em todas as referências' },
