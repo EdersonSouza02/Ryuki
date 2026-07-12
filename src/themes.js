@@ -84,11 +84,11 @@ export function setTheme(themeName) {
   } else if (themeName === "default") {
     theme = DEFAULT_THEME;
   } else {
-    return false;
+    return null;
   }
 
   writeFileSync(THEME_FILE, JSON.stringify(theme, null, 2));
-  return true;
+  return theme;
 }
 
 export function getAvailableThemes() {

@@ -15,6 +15,8 @@ import { retryWithBackoff } from "./retry.js";
 import { highlightCode } from "./highlight.js";
 import { formatTable } from "./tableFormatter.js";
 import { printError } from "./errors.js";
+import { loadTheme, setTheme } from "./themes.js";
+import { setThemeForSession } from "./colorProvider.js";
 
 function startTimer() {
   const startTime = Date.now();
@@ -99,6 +101,10 @@ async function nextQuestion({ interactive, lines, history }) {
 }
 
 export async function runRepl({ fast: initialFast = false } = {}) {
+  // Carrega o tema ao iniciar
+  const theme = loadTheme();
+  setThemeForSession(theme);
+
   const state = {
     fast: initialFast,
     sessionConfig: createSessionConfig(),

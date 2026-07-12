@@ -6,6 +6,7 @@ import { searchHistory } from "./conversation.js";
 import { clearCache } from "./cache.js";
 import { setSetting, printConfig } from "./sessionConfig.js";
 import { setTheme, getAvailableThemes } from "./themes.js";
+import { setThemeForSession } from "./colorProvider.js";
 
 // Fonte única pros comandos: alimenta tanto o /help quanto o autocomplete
 // (Tab) do REPL, pra não ter duas listas que podem ficar desalinhadas.
@@ -105,10 +106,12 @@ export async function handleCommand(question, state) {
         console.log(gray("Use: /theme <nome>"));
         break;
       }
-      if (setTheme(themeName)) {
-        console.log(gray(`Tema alterado para "${themeName}". Reabra o Ryuki para aplicar.`));
+      const theme = setTheme(themeName);
+      if (theme) {
+        setThemeForSession(theme);
+        console.log(gray(`✓ Tema alterado para "${themeName}"`));
       } else {
-        console.log(gray(`Tema "${themeName}" não encontrado.`));
+        console.log(gray(`✗ Tema "${themeName}" não encontrado.`));
       }
       break;
     }
