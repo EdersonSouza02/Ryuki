@@ -1,12 +1,16 @@
+// Re-exporta funções de colorização que usam o tema ativo
+// Se colorProvider não estiver inicializado, usa cores padrão
+import { colorize as themeColors, bold as themeBold, cyan as themeCyan, gray as themeGray } from "./colorProvider.js";
+
 const COLOR = process.stdout.isTTY;
 
 function color(code, text) {
   return COLOR ? `\x1b[${code}m${text}\x1b[0m` : text;
 }
 
-export const bold = (text) => color("1", text);
-export const cyan = (text) => color("36", text);
-export const gray = (text) => color("90", text);
+export const bold = themeBold;
+export const cyan = themeCyan;
+export const gray = themeGray;
 
 export function visibleLength(text) {
   return text.replace(/\x1b\[[0-9;]*m/g, "").length;
