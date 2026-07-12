@@ -8,6 +8,15 @@ export const bold = (text) => color("1", text);
 export const cyan = (text) => color("36", text);
 export const gray = (text) => color("90", text);
 
+export function visibleLength(text) {
+  return text.replace(/\x1b\[[0-9;]*m/g, "").length;
+}
+
+export function boxWidth() {
+  const cols = process.stdout.columns || 80;
+  return Math.min(Math.max(cols - 4, 40), 96);
+}
+
 export function wrapText(text, width) {
   const words = text.split(" ");
   const lines = [];

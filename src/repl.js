@@ -2,16 +2,11 @@ import { createInterface } from "node:readline/promises";
 import { loadConfig } from "./config.js";
 import { search } from "./firecrawl.js";
 import { synthesize } from "./groq.js";
-import { bold, gray, wrapText, truncate } from "./format.js";
-import { banner } from "./banner.js";
+import { bold, gray, wrapText, truncate, boxWidth } from "./format.js";
+import { welcomeBox } from "./banner.js";
 import { withSpinner } from "./spinner.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
-
-function boxWidth() {
-  const cols = process.stdout.columns || 80;
-  return Math.min(Math.max(cols - 4, 40), 96);
-}
 
 export function printResults(results) {
   const width = boxWidth();
@@ -53,8 +48,9 @@ export async function runRepl() {
 
   const { firecrawlKey, groqKey } = await loadConfig(lines);
 
-  console.log(banner());
-  console.log("Digite sua pergunta (ou 'sair' para encerrar).\n");
+  console.log("");
+  console.log(welcomeBox({ firecrawlOk: !!firecrawlKey, groqOk: !!groqKey, width: boxWidth() }));
+  console.log("");
 
   while (true) {
     process.stdout.write("ryuki> ");
