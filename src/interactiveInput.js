@@ -99,6 +99,18 @@ export function readInteractiveLine(history) {
         return;
       }
 
+      if (key.name === "tab") {
+        const matches = matchingCommands(input);
+        if (matches.length > 0) {
+          // Completa com o comando selecionado
+          input = matches[selected].name;
+          selected = 0;
+          historyIndex = -1;
+          render(input, matchingCommands(input), selected);
+        }
+        return;
+      }
+
       if (str && !key.ctrl && !key.meta) {
         input += str;
         selected = 0;
