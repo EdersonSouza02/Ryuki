@@ -5,6 +5,9 @@ const DEFAULT_CONFIG = {
   maxTokens: 1024,
   language: "pt",
   showSources: true,
+  detail: "full", // short ou full
+  lastQuestion: "",
+  lastResponse: "",
 };
 
 export function createSessionConfig() {
@@ -62,6 +65,16 @@ export function setSetting(config, setting, value) {
       return true;
     }
 
+    case "detail": {
+      if (!["short", "full"].includes(val.toLowerCase())) {
+        console.log(gray("detail deve ser: short ou full"));
+        return false;
+      }
+      config.detail = val.toLowerCase();
+      console.log(gray(`modo detalhado: ${val.toLowerCase()}`));
+      return true;
+    }
+
     default:
       console.log(gray(`configuração desconhecida: ${key}`));
       return false;
@@ -75,6 +88,7 @@ export function printConfig(config) {
   console.log(`  maxTokens:    ${config.maxTokens}`);
   console.log(`  language:     ${config.language}`);
   console.log(`  showSources:  ${config.showSources}`);
+  console.log(`  detail:       ${config.detail} (short/full)`);
   console.log("");
   console.log(gray("Use /set chave=valor para alterar (ex: /set temperature=0.7)"));
 }

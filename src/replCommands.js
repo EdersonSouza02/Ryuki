@@ -5,6 +5,7 @@ import { selectModel } from "./interactiveInput.js";
 import { searchHistory } from "./conversation.js";
 import { clearCache } from "./cache.js";
 import { setSetting, printConfig } from "./sessionConfig.js";
+import { exportMarkdown, exportJSON } from "./exporter.js";
 
 // Fonte única pros comandos: alimenta tanto o /help quanto o autocomplete
 // (Tab) do REPL, pra não ter duas listas que podem ficar desalinhadas.
@@ -14,7 +15,8 @@ export const COMMANDS = [
   { name: "/model", description: "escolhe entre kunai ou gear" },
   { name: "/search", description: "busca no histórico de conversas" },
   { name: "/continue", description: "continua a resposta anterior" },
-  { name: "/set", description: "configura temperatura, tokens, idioma" },
+  { name: "/set", description: "configura temperatura, tokens, idioma, detail" },
+  { name: "/export", description: "exporta última resposta (markdown ou json)" },
   { name: "/clear-cache", description: "limpa o cache de buscas" },
   { name: "/version", description: "mostra a versão instalada" },
   { name: "/help", description: "mostra essa lista" },
@@ -92,6 +94,36 @@ export async function handleCommand(question, state) {
         printConfig(state.sessionConfig);
       } else {
         setSetting(state.sessionConfig, setting);
+      }
+      break;
+    }
+    case "/export": {
+      const format = args[0]?.toLowerCase();
+      if (!state.sessionConfig.lastResponse) {
+        console.log(gray("Nenhuma resposta anterior pra exportar."));
+        break;
+      }
+      try {
+        let filepath;
+        if (format === "json") {
+          filepath = exportJSON(
+            state.sessionConfig.lastQuestion,
+            state.sessionConfig.lastResponse,
+            state.lastResults || []
+          );
+        } else if (format === "markdown" || format === "md" || !format) {
+          filepath = exportMarkdown(
+            state.sessionConfig.lastQuestion,
+            state.sessionConfig.lastResponse,
+            state.lastResults || []
+          );
+        } else {
+          console.log(gray("Formato desconhecido. Use: /export markdown ou /export json"));
+          break;
+        }
+        console.log(gray(`Exportado para: ${filepath}`));
+      } catch (err) {
+        console.log(gray(`Erro ao exportar: ${err.message}`));
       }
       break;
     }

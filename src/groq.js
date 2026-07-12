@@ -35,8 +35,18 @@ Eu sou o Ryuki, um assistente de pesquisa de terminal.`;
 // Gera a resposta em streaming. Produz eventos { type: "meta", usedSources }
 // (uma vez, assim que o cabeçalho chega) seguidos de { type: "delta", text }
 // conforme os pedaços da resposta vão chegando da Groq.
-export async function* synthesizeStream(question, results, apiKey, { fast = false } = {}) {
+export async function* synthesizeStream(question, results, apiKey, { fast = false, detail = "full", lastQuestion = "", lastResponse = "" } = {}) {
   const context = results.map((r, i) => `[${i + 1}] ${r.title || r.url}\n${r.url}\n${r.content}`).join("\n\n");
+
+  let systemPrompt = SYSTEM_PROMPT;
+  if (detail === "short") {
+    systemPrompt += "\n\nIMPORTANTE: Mantenha a resposta BREVE E CONCISA - máximo 2-3 frases. Vá direto ao ponto, sem explicações extras.";
+  }
+
+  let userContent = `Pergunta: ${question}\n\nFontes:\n${context}`;
+  if (lastQuestion && lastResponse) {
+    userContent = `Contexto da pergunta anterior:\nP: ${lastQuestion}\nR: ${lastResponse}\n\n---\n\n${userContent}`;
+  }
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -49,8 +59,8 @@ export async function* synthesizeStream(question, results, apiKey, { fast = fals
       temperature: 0.3,
       stream: true,
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: `Pergunta: ${question}\n\nFontes:\n${context}` },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userContent },
       ],
     }),
   });

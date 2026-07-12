@@ -40,18 +40,20 @@ export function printResults(results) {
 }
 
 // Consome a resposta em streaming, imprimindo os pedaços conforme chegam.
-// Retorna se as fontes foram usadas (pra decidir se mostra a lista depois).
-export async function answerAndPrint(question, results, groqKey, { fast = false } = {}) {
+// Retorna { usedSources, response } — usedSources decide se mostra a lista depois,
+// response é a texto completo da resposta pra salvar em sessionConfig.
+export async function answerAndPrint(question, results, groqKey, { fast = false, detail = "full", lastQuestion = "", lastResponse = "" } = {}) {
   const width = boxWidth();
   let stopSpinner = startSpinner("Pensando...");
   let started = false;
   let printedHeader = false;
   let usedSources = true;
+  let fullResponse = "";
 
   try {
     const writer = createStreamWriter(width);
 
-    for await (const event of synthesizeStream(question, results, groqKey, { fast })) {
+    for await (const event of synthesizeStream(question, results, groqKey, { fast, detail, lastQuestion, lastResponse })) {
       if (!started) {
         stopSpinner();
         started = true;
@@ -66,6 +68,7 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
         usedSources = event.usedSources;
       } else if (event.type === "delta") {
         writer.write(event.text);
+        fullResponse += event.text;
       }
     }
 
@@ -76,10 +79,10 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
   } catch (err) {
     if (!started) stopSpinner();
     console.error(gray(`(resposta de IA indisponível: ${err.message})\n`));
-    return true; // sem resposta de IA, mantém fontes visíveis
+    return { usedSources: true, response: "" }; // sem resposta de IA, mantém fontes visíveis
   }
 
-  return usedSources;
+  return { usedSources, response: fullResponse };
 }
 
 // Pergunta seguinte: no modo interativo (TTY), usa o leitor customizado com
@@ -104,6 +107,7 @@ export async function runRepl({ fast: initialFast = false } = {}) {
     sessionConfig: createSessionConfig(),
     continuePrevious: false,
     lastResponse: "",
+    lastResults: [],
   };
 
   const interactive = process.stdin.isTTY;
@@ -171,7 +175,17 @@ export async function runRepl({ fast: initialFast = false } = {}) {
         continue;
       }
 
-      const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
+      const { usedSources, response } = await answerAndPrint(question, results, groqKey, {
+        fast: state.fast,
+        detail: state.sessionConfig.detail,
+        lastQuestion: state.sessionConfig.lastQuestion,
+        lastResponse: state.sessionConfig.lastResponse,
+      });
+
+      state.sessionConfig.lastQuestion = question;
+      state.sessionConfig.lastResponse = response;
+      state.lastResults = results;
+
       saveConversation(question, "resposta salva", { fast: state.fast });
 
       if (usedSources) printResults(results);
