@@ -9,6 +9,16 @@ import { loadHistory, saveHistory } from "./history.js";
 import { handleCommand, completer } from "./replCommands.js";
 import { readInteractiveLine, enableRawMode, disableRawMode } from "./interactiveInput.js";
 
+function startTimer() {
+  const startTime = Date.now();
+  return () => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    if (elapsed > 0) {
+      process.stdout.write(gray(` ${elapsed}s`));
+    }
+  };
+}
+
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
 
 export function printResults(results) {
@@ -126,15 +136,24 @@ export async function runRepl({ fast: initialFast = false } = {}) {
     }
 
     try {
-      const results = await withSpinner("Buscando...", () => search(question, firecrawlKey));
+      const getTimer = startTimer();
+      const timerInterval = setInterval(getTimer, 1000);
 
-      if (results.length === 0) {
-        console.log("Nenhum resultado encontrado.\n");
-        continue;
+      try {
+        const results = await withSpinner("Buscando...", () => search(question, firecrawlKey));
+        clearInterval(timerInterval);
+        console.log("");
+
+        if (results.length === 0) {
+          console.log("Nenhum resultado encontrado.\n");
+          continue;
+        }
+
+        const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
+        if (usedSources) printResults(results);
+      } finally {
+        clearInterval(timerInterval);
       }
-
-      const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
-      if (usedSources) printResults(results);
     } catch (err) {
       console.error(`Erro: ${err.message}\n`);
     }
