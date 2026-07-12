@@ -1,4 +1,4 @@
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -60,4 +60,25 @@ export async function loadConfig(lines) {
   }
 
   return { firecrawlKey, groqKey };
+}
+
+function maskKey(key) {
+  if (!key) return null;
+  return key.length <= 4 ? "••••" : `${"•".repeat(Math.min(key.length - 4, 12))}${key.slice(-4)}`;
+}
+
+export function configStatus() {
+  const fileConfig = readConfigFile();
+  const firecrawlKey = process.env.FIRECRAWL_API_KEY || fileConfig.firecrawlApiKey || null;
+  const groqKey = process.env.GROQ_API_KEY || fileConfig.groqApiKey || null;
+
+  return {
+    path: CONFIG_PATH,
+    firecrawl: firecrawlKey ? { configured: true, masked: maskKey(firecrawlKey) } : { configured: false },
+    groq: groqKey ? { configured: true, masked: maskKey(groqKey) } : { configured: false },
+  };
+}
+
+export function resetConfig() {
+  if (existsSync(CONFIG_PATH)) rmSync(CONFIG_PATH);
 }

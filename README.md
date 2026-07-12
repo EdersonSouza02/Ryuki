@@ -16,6 +16,35 @@ Pra uma pergunta rápida sem entrar no modo interativo:
 ryuki "quais os maiores artilheiros da história da champions league"
 ```
 
+## Linha de comando
+
+```bash
+ryuki                       # abre o modo interativo (REPL)
+ryuki "sua pergunta"        # busca e responde direto, sem abrir o REPL
+ryuki --fast "sua pergunta" # usa um modelo mais rápido (e mais direto) da Groq
+ryuki config                # mostra quais chaves estão configuradas
+ryuki config reset          # apaga as chaves salvas
+ryuki --help                # ajuda
+ryuki --version             # versão instalada
+```
+
+## Comandos no modo interativo
+
+Dentro do REPL, qualquer linha que começa com `/` é tratada como comando (nunca é enviada como busca):
+
+| Comando         | O que faz                                              |
+| --------------- | -------------------------------------------------------|
+| `/help`         | Lista os comandos disponíveis                          |
+| `/config`       | Mostra quais chaves estão configuradas                 |
+| `/config reset` | Apaga as chaves salvas                                 |
+| `/kunai`        | Alterna pro modelo rápido, pro resto da sessão          |
+| `/gear`         | Alterna pro modelo padrão (mais completo), pro resto da sessão |
+| `/version`      | Mostra a versão instalada                               |
+
+Digite `/` e aperte Tab duas vezes pra ver a lista de comandos sem precisar decorar. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
+
+Digite `sair`, `exit` ou `quit` pra encerrar. O histórico de perguntas fica salvo entre sessões (seta pra cima recupera perguntas antigas).
+
 ## Instalação permanente
 
 ```bash
@@ -61,8 +90,8 @@ Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variá
 
 1. Você digita uma pergunta no prompt `ryuki>` (ou passa direto como argumento, no modo one-shot).
 2. Ele busca na web via Firecrawl (`/v1/search`) — detecta automaticamente se a pergunta pede algo recente (ex: "hoje", "essa semana") pra priorizar resultados atuais, e evita domínios de redes sociais/vídeo que costumam ter pouco conteúdo textual útil.
-3. Os resultados são enviados pra Groq (`llama-3.3-70b-versatile`), que gera uma resposta direta em português com citações `[1]`, `[2]`, etc.
-4. Mostra a resposta da IA, seguida da lista de fontes (título + link) usadas pra montá-la.
+3. Os resultados são enviados pra Groq, que gera a resposta em português com citações `[1]`, `[2]`, etc. — o texto vai aparecendo em tempo real (streaming), sem esperar a resposta inteira ficar pronta.
+4. Mostra a resposta da IA, seguida da lista de fontes (título + link) usadas pra montá-la. Se a pergunta for sobre o próprio Ryuki (nome, criador, limitações), ele responde direto e não mostra fontes de busca.
 5. Digite `sair` para encerrar o modo interativo.
 
 ## Desenvolvimento local

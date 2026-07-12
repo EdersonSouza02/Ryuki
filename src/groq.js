@@ -1,15 +1,11 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { VERSION } from "./version.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const { version } = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf8"));
-
-const MODEL = "llama-3.3-70b-versatile";
+const MODEL_DEFAULT = "llama-3.3-70b-versatile";
+const MODEL_FAST = "llama-3.1-8b-instant";
 
 const HEADER_RE = /^USED_SOURCES:\s*(true|false)\s*\n+/i;
 
-const SYSTEM_PROMPT = `Você é o Ryuki (versão ${version}), um assistente de pesquisa que roda no terminal.
+const SYSTEM_PROMPT = `Você é o Ryuki (versão ${VERSION}), um assistente de pesquisa que roda no terminal.
 
 Fatos sobre você, use-os quando perguntarem especificamente sobre isso:
 - Foi criado por EdersonSouza02 (GitHub: https://github.com/EdersonSouza02/ryuki), como projeto de código aberto sob licença MIT.
@@ -39,7 +35,7 @@ Eu sou o Ryuki, um assistente de pesquisa de terminal.`;
 // Gera a resposta em streaming. Produz eventos { type: "meta", usedSources }
 // (uma vez, assim que o cabeçalho chega) seguidos de { type: "delta", text }
 // conforme os pedaços da resposta vão chegando da Groq.
-export async function* synthesizeStream(question, results, apiKey) {
+export async function* synthesizeStream(question, results, apiKey, { fast = false } = {}) {
   const context = results.map((r, i) => `[${i + 1}] ${r.title || r.url}\n${r.url}\n${r.content}`).join("\n\n");
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -49,7 +45,7 @@ export async function* synthesizeStream(question, results, apiKey) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: fast ? MODEL_FAST : MODEL_DEFAULT,
       temperature: 0.3,
       stream: true,
       messages: [

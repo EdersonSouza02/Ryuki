@@ -4,7 +4,7 @@ import { search } from "./firecrawl.js";
 import { printResults, answerAndPrint } from "./repl.js";
 import { withSpinner } from "./spinner.js";
 
-export async function runOnce(question) {
+export async function runOnce(question, { fast = false } = {}) {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const lines = rl[Symbol.asyncIterator]();
 
@@ -18,6 +18,6 @@ export async function runOnce(question) {
     return;
   }
 
-  const usedSources = await answerAndPrint(question, results, groqKey);
+  const usedSources = await answerAndPrint(question, results, groqKey, { fast });
   if (usedSources) printResults(results);
 }
