@@ -1,11 +1,19 @@
 # ryuki
 
-Assistente de pesquisa no terminal. Você pergunta, ele busca na web via [Firecrawl](https://www.firecrawl.dev) e mostra os resultados formatados, com título, URL e um trecho relevante de cada página.
+Assistente de pesquisa no terminal. Você pergunta, ele busca na web via [Firecrawl](https://www.firecrawl.dev), gera uma resposta resumida com IA ([Groq](https://console.groq.com)) a partir dos resultados, e mostra a fonte de cada informação.
 
 ## Uso rápido (sem instalar nada)
 
 ```bash
 npx ryuki
+```
+
+## Modo one-shot
+
+Pra uma pergunta rápida sem entrar no modo interativo:
+
+```bash
+ryuki "quais os maiores artilheiros da história da champions league"
 ```
 
 ## Instalação permanente
@@ -36,16 +44,26 @@ Duas formas de resolver:
    ```
    Depois disso, `ryuki` funciona digitando só isso, sempre.
 
+### A resposta de IA não aparece, só a lista de fontes
+
+A Groq tem um limite de uso no plano gratuito (requisições por dia e tokens por minuto). Se você estourar o limite, o `ryuki` avisa (`resposta de IA indisponível: ...`) e continua funcionando normalmente, só sem a resposta sintetizada — a busca em si nunca para de funcionar por causa disso.
+
 ## Configuração
 
-Na primeira execução, o `ryuki` pede sua chave da [Firecrawl](https://www.firecrawl.dev) (gratuita) e salva em `~/.config/ryuki/config.json`. Nas próximas vezes já usa a chave salva.
+Na primeira execução, o `ryuki` pede duas chaves gratuitas e salva em `~/.config/ryuki/config.json` (arquivo com permissão restrita, `0600`, legível só pelo seu usuário):
+
+- **[Firecrawl](https://www.firecrawl.dev)** — usada pra buscar na web.
+- **[Groq](https://console.groq.com/keys)** — usada pra gerar a resposta resumida a partir dos resultados.
+
+Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variáveis de ambiente (`FIRECRAWL_API_KEY` e `GROQ_API_KEY`), que têm prioridade sobre o arquivo de configuração.
 
 ## Como funciona
 
-1. Você digita uma pergunta no prompt `ryuki>`.
-2. Ele busca na web via Firecrawl (`/v1/search`), extraindo o conteúdo das páginas em markdown.
-3. Mostra os resultados numerados, com título, URL e um trecho limpo do conteúdo.
-4. Digite `sair` para encerrar.
+1. Você digita uma pergunta no prompt `ryuki>` (ou passa direto como argumento, no modo one-shot).
+2. Ele busca na web via Firecrawl (`/v1/search`) — detecta automaticamente se a pergunta pede algo recente (ex: "hoje", "essa semana") pra priorizar resultados atuais, e evita domínios de redes sociais/vídeo que costumam ter pouco conteúdo textual útil.
+3. Os resultados são enviados pra Groq (`llama-3.3-70b-versatile`), que gera uma resposta direta em português com citações `[1]`, `[2]`, etc.
+4. Mostra a resposta da IA, seguida da lista de fontes (título + link) usadas pra montá-la.
+5. Digite `sair` para encerrar o modo interativo.
 
 ## Desenvolvimento local
 

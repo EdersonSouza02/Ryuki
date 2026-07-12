@@ -1,7 +1,7 @@
 {
   "name": "ryuki",
   "version": "0.1.5",
-  "description": "Assistente de pesquisa no terminal usando Firecrawl",
+  "description": "Assistente de pesquisa no terminal com respostas por IA, usando Firecrawl e Groq",
   "type": "module",
   "bin": {
     "ryuki": "bin/ryuki.js"
@@ -26,6 +26,8 @@
   "keywords": [
     "cli",
     "firecrawl",
-    "search"
+    "search",
+    "groq",
+    "ai"
   ]
 }
