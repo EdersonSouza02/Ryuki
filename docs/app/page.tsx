@@ -7,8 +7,24 @@ export default function Home() {
       <nav className="border-b border-purple-500/20 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-600 rounded-lg flex items-center justify-center font-bold">
-              R
+            <div className="w-10 h-10">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className="w-full h-full">
+                <defs>
+                  <linearGradient id="ryukiFoxGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stopColor="#a855f7"></stop>
+                    <stop offset="1" stopColor="#ec4899"></stop>
+                  </linearGradient>
+                </defs>
+                <polygon points="50,65 40,8 88,52" fill="url(#ryukiFoxGrad)"></polygon>
+                <polygon points="150,65 160,8 112,52" fill="url(#ryukiFoxGrad)"></polygon>
+                <polygon points="100,50 148,72 152,120 100,150 48,120 52,72" fill="url(#ryukiFoxGrad)"></polygon>
+                <polygon points="78,118 122,118 100,148" fill="#fdf6e3"></polygon>
+                <circle cx="80" cy="95" r="11" fill="#fdf6e3"></circle>
+                <circle cx="120" cy="95" r="11" fill="#fdf6e3"></circle>
+                <circle cx="81" cy="97" r="5" fill="#111111"></circle>
+                <circle cx="121" cy="97" r="5" fill="#111111"></circle>
+                <circle cx="100" cy="140" r="5" fill="#111111"></circle>
+              </svg>
             </div>
             <span className="text-xl font-bold">Ryuki</span>
           </div>
