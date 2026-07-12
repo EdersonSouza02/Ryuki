@@ -80,7 +80,15 @@ Duas formas de resolver:
 
 ### A resposta de IA não aparece, só a lista de fontes
 
-A Groq tem um limite de uso no plano gratuito (requisições por dia e tokens por minuto). Se você estourar o limite, o `ryuki` avisa (`resposta de IA indisponível: ...`) e continua funcionando normalmente, só sem a resposta sintetizada — a busca em si nunca para de funcionar por causa disso.
+A Groq tem um limite de uso no plano gratuito (**100.000 tokens por dia** no plano on-demand). Se você estourar o limite, o `ryuki` avisa claramente:
+
+```
+❌ Limite de tokens da Groq atingido
+Você usou 99.276 de 100.000 tokens hoje.
+💡 Aguarde 11m32 para o limite resetar. Ou faça upgrade pra Dev Tier: https://console.groq.com/settings/billing
+```
+
+Nesse caso, continua funcionando normalmente só sem a resposta sintetizada — a busca em si nunca para de funcionar. O limite reseta automaticamente à meia-noite (UTC).
 
 ## Exemplos de uso
 
@@ -143,6 +151,7 @@ Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variá
 - 📥 **Exportação de respostas** — `/export markdown` ou `/export json` salva última resposta em `~/.config/ryuki/exports/`
 - 🎯 **Modo detalhado configurável** — `/set detail=short` pra respostas resumidas ou `detail=full` pra completas
 - 🔄 **Contexto de follow-up** — continuações automáticas detectam o tópico anterior, permitindo "explica mais" ou "qual é a diferença..."
+- 📊 **Mensagens de erro detalhadas** — quando bate no limite de tokens da Groq, mostra exatamente quantos foram usados e quanto tempo falta pra resetar
 
 ### v0.2.0
 
