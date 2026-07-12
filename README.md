@@ -37,11 +37,13 @@ Dentro do REPL, qualquer linha que começa com `/` é tratada como comando (nunc
 | `/help`         | Lista os comandos disponíveis                          |
 | `/config`       | Mostra quais chaves estão configuradas                 |
 | `/config reset` | Apaga as chaves salvas                                 |
-| `/kunai`        | Alterna pro modelo rápido, pro resto da sessão          |
-| `/gear`         | Alterna pro modelo padrão (mais completo), pro resto da sessão |
+| `/model`        | Menu interativo pra escolher entre **kunai** (rápido) ou **gear** (completo) |
+| `/search`       | Busca no histórico de conversas anteriores              |
+| `/set`          | Configura sessão: `temperature`, `maxTokens`, `language`, `showSources` |
+| `/clear-cache`  | Limpa o cache de buscas                                |
 | `/version`      | Mostra a versão instalada                               |
 
-Num terminal de verdade, digitar `/` já abre um menu com os comandos na hora — navega com ↑/↓, filtra digitando mais letras (ex: `/ku` deixa só `/kunai`), Enter escolhe e Esc cancela. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
+Num terminal de verdade, digitar `/` já abre um menu com os comandos na hora — navega com ↑/↓, filtra digitando mais letras (ex: `/m` deixa `/model` e `/clear-c`), **Tab autocompleta**, Enter escolhe e Esc cancela. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
 
 Fora do menu (ou seja, quando a linha não começa com `/`), ↑/↓ recupera perguntas antigas do histórico, que fica salvo entre sessões.
 
@@ -79,6 +81,36 @@ Duas formas de resolver:
 
 A Groq tem um limite de uso no plano gratuito (requisições por dia e tokens por minuto). Se você estourar o limite, o `ryuki` avisa (`resposta de IA indisponível: ...`) e continua funcionando normalmente, só sem a resposta sintetizada — a busca em si nunca para de funcionar por causa disso.
 
+## Exemplos de uso
+
+### No modo interativo:
+
+```bash
+ryuki> notícias de IA de hoje
+# Busca, encontra fontes e responde com IA
+# Resposta é colorida com syntax highlighting se tiver código
+
+ryuki> /model
+  ❯ /model     escolhe entre kunai ou gear
+# Seta para baixo, Enter para escolher gear
+
+ryuki> /search IA
+# Busca nas conversas anteriores por "IA"
+
+ryuki> /set temperature=0.5
+# Deixa respostas menos criativas
+
+ryuki> /clear-cache
+# Força nova busca mesmo se pergunta é repetida
+```
+
+### Mode one-shot:
+
+```bash
+ryuki --fast "qual é a capital da França"
+# Rápido, sem entrar no REPL
+```
+
 ## Configuração
 
 Na primeira execução, o `ryuki` pede duas chaves gratuitas e salva em `~/.config/ryuki/config.json` (arquivo com permissão restrita, `0600`, legível só pelo seu usuário):
@@ -87,6 +119,19 @@ Na primeira execução, o `ryuki` pede duas chaves gratuitas e salva em `~/.conf
 - **[Groq](https://console.groq.com/keys)** — usada pra gerar a resposta resumida a partir dos resultados.
 
 Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variáveis de ambiente (`FIRECRAWL_API_KEY` e `GROQ_API_KEY`), que têm prioridade sobre o arquivo de configuração.
+
+## Novas features (v0.2.0)
+
+- 🎯 **Menu interativo `/model`** — escolha entre kunai (rápido) e gear (completo) com setas e Enter
+- 📚 **Histórico persistente** — `/search termo` busca em conversas anteriores salvas em `~/.config/ryuki/conversations/`
+- ⚡ **Cache de 24h** — mesmas perguntas retornam mais rápido, economizando API calls
+- 🎨 **Syntax highlighting** — código nas respostas é colorido (detecta Python, Java, JS, C++, SQL)
+- 📊 **Formatação de tabelas** — tabelas nas respostas ficam com bordas e alinhadas
+- ⚙️ **Configurações por sessão** — `/set temperature=0.7`, `/set language=en`, etc.
+- 🔄 **Retry automático** — falhas de rede/API retentam com backoff exponencial
+- ⌨️ **Autocomplete com Tab** — digita `/m` + Tab = `/model`
+- ⏱️ **Timer visual** — vê quanto tempo levou a busca e a resposta
+- 💡 **Error handling melhorado** — mensagens de erro amigáveis com sugestões
 
 ## Como funciona
 
