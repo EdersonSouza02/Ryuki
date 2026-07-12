@@ -41,7 +41,7 @@ export function printResults(results) {
 
 // Consome a resposta em streaming, imprimindo os pedaços conforme chegam.
 // Retorna se as fontes foram usadas (pra decidir se mostra a lista depois).
-export async function answerAndPrint(question, results, groqKey, { fast = false } = {}) {
+export async function answerAndPrint(question, results, groqKey, { fast = false, language = "pt" } = {}) {
   const width = boxWidth();
   let stopSpinner = startSpinner("Pensando...");
   let started = false;
@@ -51,7 +51,7 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
   try {
     const writer = createStreamWriter(width);
 
-    for await (const event of synthesizeStream(question, results, groqKey, { fast })) {
+    for await (const event of synthesizeStream(question, results, groqKey, { fast, language })) {
       if (!started) {
         stopSpinner();
         started = true;
@@ -171,7 +171,7 @@ export async function runRepl({ fast: initialFast = false } = {}) {
         continue;
       }
 
-      const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
+      const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast, language: state.sessionConfig.language });
       saveConversation(question, "resposta salva", { fast: state.fast });
 
       if (usedSources) printResults(results);
