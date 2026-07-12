@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { VersionBadge } from './components/VersionBadge';
 
 export default function Home() {
   return (
@@ -131,10 +132,7 @@ export default function Home() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 pt-20 text-center border-t border-purple-500/20">
-          <div>
-            <div className="text-4xl font-bold text-purple-400">0.3.0</div>
-            <div className="text-slate-400 mt-2">Latest Version</div>
-          </div>
+          <VersionBadge />
           <div>
             <div className="text-4xl font-bold text-purple-400">5</div>
             <div className="text-slate-400 mt-2">Major Features</div>
