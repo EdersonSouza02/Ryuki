@@ -24,22 +24,23 @@ export function bold(text) {
   return `\x1b[1m${text}\x1b[0m`;
 }
 
+// Avalia dinamicamente o tema a cada chamada
 export function cyan(text) {
-  return colorize.prompt(text);
+  return `${currentTheme.colors.prompt}${text}\x1b[0m`;
 }
 
 export function gray(text) {
-  return colorize.info(text);
+  return `${currentTheme.colors.info}${text}\x1b[0m`;
 }
 
 export function green(text) {
-  return colorize.success(text);
+  return `${currentTheme.colors.success}${text}\x1b[0m`;
 }
 
 export function red(text) {
-  return colorize.error(text);
+  return `${currentTheme.colors.error}${text}\x1b[0m`;
 }
 
 export function yellow(text) {
-  return colorize.warning(text);
+  return `${currentTheme.colors.warning}${text}\x1b[0m`;
 }
