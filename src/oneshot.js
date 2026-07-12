@@ -19,7 +19,7 @@ export async function runOnce(question) {
   }
 
   const answer = await withSpinner("Pensando...", () => getAnswer(question, results, groqKey));
-  if (answer) printAnswer(answer);
+  if (answer) printAnswer(answer.text);
 
-  printResults(results);
+  if (!answer || answer.usedSources) printResults(results);
 }
