@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -7,6 +7,10 @@ const CONFIG_PATH = join(CONFIG_DIR, "config.json");
 
 function readConfigFile() {
   if (!existsSync(CONFIG_PATH)) return {};
+  // Corrige a permissão mesmo em instalações antigas, onde o arquivo/pasta
+  // podem ter sido criados antes dessa restrição existir.
+  chmodSync(CONFIG_DIR, 0o700);
+  chmodSync(CONFIG_PATH, 0o600);
   try {
     return JSON.parse(readFileSync(CONFIG_PATH, "utf8"));
   } catch {
@@ -15,8 +19,12 @@ function readConfigFile() {
 }
 
 function saveConfigFile(config) {
-  mkdirSync(CONFIG_DIR, { recursive: true });
-  writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+  // 0700/0600: só o dono da conta consegue ler as chaves salvas aqui,
+  // mesmo em máquinas com outros usuários locais.
+  mkdirSync(CONFIG_DIR, { recursive: true, mode: 0o700 });
+  chmodSync(CONFIG_DIR, 0o700);
+  writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), { mode: 0o600 });
+  chmodSync(CONFIG_PATH, 0o600);
 }
 
 async function promptForKey(lines, label, signupUrl) {
@@ -29,17 +37,27 @@ async function promptForKey(lines, label, signupUrl) {
 
 export async function loadConfig(lines) {
   const fileConfig = readConfigFile();
+  const config = { ...fileConfig };
+  let changed = false;
 
   let firecrawlKey = process.env.FIRECRAWL_API_KEY || fileConfig.firecrawlApiKey;
-
-  if (firecrawlKey) {
-    return { firecrawlKey };
+  if (!firecrawlKey) {
+    firecrawlKey = await promptForKey(lines, "Chave da Firecrawl", "https://www.firecrawl.dev");
+    config.firecrawlApiKey = firecrawlKey;
+    changed = true;
   }
 
-  firecrawlKey = await promptForKey(lines, "Chave da Firecrawl", "https://www.firecrawl.dev");
+  let groqKey = process.env.GROQ_API_KEY || fileConfig.groqApiKey;
+  if (!groqKey) {
+    groqKey = await promptForKey(lines, "Chave da Groq (resposta gerada por IA)", "https://console.groq.com/keys");
+    config.groqApiKey = groqKey;
+    changed = true;
+  }
 
-  saveConfigFile({ firecrawlApiKey: firecrawlKey });
-  console.log(`\nChave salva em ${CONFIG_PATH}\n`);
+  if (changed) {
+    saveConfigFile(config);
+    console.log(`\nChave(s) salva(s) em ${CONFIG_PATH}\n`);
+  }
 
-  return { firecrawlKey };
+  return { firecrawlKey, groqKey };
 }

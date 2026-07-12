@@ -1,7 +1,8 @@
 import { createInterface } from "node:readline/promises";
 import { loadConfig } from "./config.js";
 import { search } from "./firecrawl.js";
-import { bold, cyan, gray, snippet, wrapText, visibleLength, truncate } from "./format.js";
+import { synthesize } from "./groq.js";
+import { bold, gray, wrapText, truncate } from "./format.js";
 import { banner } from "./banner.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
@@ -11,32 +12,45 @@ function boxWidth() {
   return Math.min(Math.max(cols - 4, 40), 96);
 }
 
-function boxLine(text, width) {
-  const pad = Math.max(width - visibleLength(text), 0);
-  return `${gray("│")} ${text}${" ".repeat(pad)} ${gray("│")}`;
-}
-
 export function printResults(results) {
   const width = boxWidth();
-  const top = gray(`┌${"─".repeat(width + 2)}┐`);
-  const bottom = gray(`└${"─".repeat(width + 2)}┘`);
-
+  console.log(bold("Fontes"));
+  console.log("");
   results.forEach((r, i) => {
-    console.log(top);
-    wrapText(`[${i + 1}] ${r.title || r.url}`, width).forEach((line) => console.log(boxLine(bold(line), width)));
-    console.log(boxLine(cyan(truncate(r.url, width)), width));
-    console.log(boxLine("", width));
-    wrapText(snippet(r.content, 240), width).forEach((line) => console.log(boxLine(gray(line), width)));
-    console.log(bottom);
-    console.log("");
+    console.log(`${bold(`[${i + 1}]`)} ${truncate(r.title || r.url, width - 4)}`);
+    console.log(gray(`    ${truncate(r.url, width - 4)}`));
   });
+  console.log("");
+}
+
+export function printAnswer(text) {
+  const width = boxWidth();
+  console.log(bold("✨ Resposta"));
+  console.log("");
+  text.split("\n").forEach((paragraph) => {
+    if (paragraph.trim() === "") {
+      console.log("");
+      return;
+    }
+    wrapText(paragraph, width).forEach((line) => console.log(line));
+  });
+  console.log("");
+}
+
+export async function getAnswer(question, results, groqKey) {
+  try {
+    return await synthesize(question, results, groqKey);
+  } catch (err) {
+    console.error(gray(`(resposta de IA indisponível: ${err.message})\n`));
+    return null;
+  }
 }
 
 export async function runRepl() {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const lines = rl[Symbol.asyncIterator]();
 
-  const { firecrawlKey } = await loadConfig(lines);
+  const { firecrawlKey, groqKey } = await loadConfig(lines);
 
   console.log(banner());
   console.log("Digite sua pergunta (ou 'sair' para encerrar).\n");
@@ -58,6 +72,9 @@ export async function runRepl() {
         console.log("Nenhum resultado encontrado.\n");
         continue;
       }
+
+      const answer = await getAnswer(question, results, groqKey);
+      if (answer) printAnswer(answer);
 
       printResults(results);
     } catch (err) {
