@@ -6,7 +6,7 @@ import { banner } from "./banner.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
 
-function printResults(results) {
+export function printResults(results) {
   results.forEach((r, i) => {
     console.log(bold(`[${i + 1}] ${r.title || r.url}`));
     console.log(cyan(r.url));

@@ -1,4 +1,4 @@
-export async function search(query, apiKey, limit = 6) {
+export async function search(query, apiKey, { limit = 6, lang = "pt", country = "br" } = {}) {
   const response = await fetch("https://api.firecrawl.dev/v1/search", {
     method: "POST",
     headers: {
@@ -7,7 +7,7 @@ export async function search(query, apiKey, limit = 6) {
     },
     // Sem scrapeOptions: só busca (sem renderizar/extrair cada página inteira),
     // o que deixa a resposta bem mais rápida.
-    body: JSON.stringify({ query, limit }),
+    body: JSON.stringify({ query, limit, lang, country }),
   });
 
   if (!response.ok) {
