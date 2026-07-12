@@ -17,6 +17,7 @@ import { formatTable } from "./tableFormatter.js";
 import { printError } from "./errors.js";
 import { loadTheme, setTheme } from "./themes.js";
 import { setThemeForSession } from "./colorProvider.js";
+import { colorize } from "./colorProvider.js";
 
 function startTimer() {
   const startTime = Date.now();
@@ -59,7 +60,7 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
         started = true;
       }
       if (!printedHeader) {
-        console.log(bold("✨ Resposta"));
+        console.log(colorize.highlight(bold("✨ Resposta")));
         console.log("");
         printedHeader = true;
       }

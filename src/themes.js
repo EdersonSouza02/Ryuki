@@ -46,12 +46,12 @@ const PRESET_THEMES = {
   solarized: {
     name: "solarized",
     colors: {
-      prompt: "\x1b[96m", // bright cyan
+      prompt: "\x1b[35m", // magenta (diferente de dark)
       success: "\x1b[92m", // bright green
       error: "\x1b[91m", // bright red
-      warning: "\x1b[93m", // bright yellow
-      info: "\x1b[94m", // bright blue
-      highlight: "\x1b[1m\x1b[96m", // bright cyan
+      warning: "\x1b[33m", // yellow
+      info: "\x1b[36m", // cyan
+      highlight: "\x1b[1m\x1b[35m", // bold magenta
       reset: "\x1b[0m",
     },
   },
