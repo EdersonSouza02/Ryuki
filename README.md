@@ -39,7 +39,8 @@ Dentro do REPL, qualquer linha que começa com `/` é tratada como comando (nunc
 | `/config reset` | Apaga as chaves salvas                                 |
 | `/model`        | Menu interativo pra escolher entre **kunai** (rápido) ou **gear** (completo) |
 | `/search`       | Busca no histórico de conversas anteriores              |
-| `/set`          | Configura sessão: `temperature`, `maxTokens`, `language`, `showSources` |
+| `/set`          | Configura sessão: `temperature`, `maxTokens`, `language`, `showSources`, `detail` |
+| `/export`       | Exporta última resposta em markdown ou JSON             |
 | `/clear-cache`  | Limpa o cache de buscas                                |
 | `/version`      | Mostra a versão instalada                               |
 
@@ -90,6 +91,21 @@ ryuki> notícias de IA de hoje
 # Busca, encontra fontes e responde com IA
 # Resposta é colorida com syntax highlighting se tiver código
 
+ryuki> /set detail=short
+# Próximas respostas serão resumidas (máximo 2-3 frases)
+
+ryuki> o que é transformers?
+# Resposta breve sobre transformers
+
+ryuki> mas como eles funcionam?
+# Follow-up: usa contexto da pergunta anterior pra entender "eles" = transformers
+
+ryuki> /export markdown
+# Salva última resposta em ~/.config/ryuki/exports/resposta-2026-07-12T16-14-25.md
+
+ryuki> /export json
+# Salva última resposta em ~/.config/ryuki/exports/resposta-2026-07-12T16-14-25.json
+
 ryuki> /model
   ❯ /model     escolhe entre kunai ou gear
 # Seta para baixo, Enter para escolher gear
@@ -120,7 +136,15 @@ Na primeira execução, o `ryuki` pede duas chaves gratuitas e salva em `~/.conf
 
 Nas próximas vezes já usa as chaves salvas. Também dá pra definir via variáveis de ambiente (`FIRECRAWL_API_KEY` e `GROQ_API_KEY`), que têm prioridade sobre o arquivo de configuração.
 
-## Novas features (v0.2.0)
+## Novas features
+
+### v0.3.0 (em desenvolvimento)
+
+- 📥 **Exportação de respostas** — `/export markdown` ou `/export json` salva última resposta em `~/.config/ryuki/exports/`
+- 🎯 **Modo detalhado configurável** — `/set detail=short` pra respostas resumidas ou `detail=full` pra completas
+- 🔄 **Contexto de follow-up** — continuações automáticas detectam o tópico anterior, permitindo "explica mais" ou "qual é a diferença..."
+
+### v0.2.0
 
 - 🎯 **Menu interativo `/model`** — escolha entre kunai (rápido) e gear (completo) com setas e Enter
 - 📚 **Histórico persistente** — `/search termo` busca em conversas anteriores salvas em `~/.config/ryuki/conversations/`
