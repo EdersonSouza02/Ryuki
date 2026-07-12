@@ -37,11 +37,28 @@ export function formatError(error) {
     };
   }
 
-  if (message.includes("429") || message.includes("quota")) {
+  if (message.includes("429") || message.includes("quota") || message.includes("rate_limit_exceeded")) {
+    // Tenta extrair informações detalhadas do erro de rate limit
+    const limitMatch = message.match(/Limit (\d+)/);
+    const usedMatch = message.match(/Used (\d+)/);
+    const timeMatch = message.match(/Please try again in ([^.]+)\./);
+
+    if (limitMatch && usedMatch && timeMatch) {
+      const limit = parseInt(limitMatch[1]);
+      const used = parseInt(usedMatch[1]);
+      const timeRemaining = timeMatch[1];
+
+      return {
+        title: "Limite de tokens da Groq atingido",
+        message: `Você usou ${used.toLocaleString("pt-BR")} de ${limit.toLocaleString("pt-BR")} tokens hoje.`,
+        suggestion: `Aguarde ${timeRemaining} para o limite resetar. Ou faça upgrade pra Dev Tier: https://console.groq.com/settings/billing`,
+      };
+    }
+
     return {
       title: "Limite de requisições",
       message: "Você atingiu o limite de uso da API.",
-      suggestion: "Tente novamente em alguns minutos.",
+      suggestion: "Tente novamente em alguns minutos, ou faça upgrade na Groq.",
     };
   }
 
