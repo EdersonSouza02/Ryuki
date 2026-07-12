@@ -9,8 +9,6 @@ export const COMMANDS = [
   { name: "/config", description: "mostra quais chaves estão configuradas" },
   { name: "/config reset", description: "apaga as chaves salvas" },
   { name: "/model", description: "escolhe entre kunai ou gear" },
-  { name: "/kunai", description: "modelo rápido e mais direto" },
-  { name: "/gear", description: "modelo padrão, respostas mais completas" },
   { name: "/version", description: "mostra a versão instalada" },
   { name: "/help", description: "mostra essa lista" },
 ];
@@ -57,14 +55,6 @@ export async function handleCommand(question, state) {
       }
       break;
     }
-    case "/kunai":
-      state.fast = true;
-      console.log(gray("Modo kunai ativado: respostas mais rápidas e diretas pro resto da sessão."));
-      break;
-    case "/gear":
-      state.fast = false;
-      console.log(gray("Modo gear ativado: respostas mais completas pro resto da sessão."));
-      break;
     case "/version":
       console.log(VERSION);
       break;
