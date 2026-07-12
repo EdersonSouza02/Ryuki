@@ -7,6 +7,7 @@ import { welcomeBox } from "./banner.js";
 import { withSpinner, startSpinner } from "./spinner.js";
 import { loadHistory, saveHistory } from "./history.js";
 import { handleCommand, completer } from "./replCommands.js";
+import { readInteractiveLine, enableRawMode, disableRawMode } from "./interactiveInput.js";
 
 const EXIT_COMMANDS = new Set(["sair", "exit", "quit"]);
 
@@ -64,11 +65,27 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
   return usedSources;
 }
 
+// Pergunta seguinte: no modo interativo (TTY), usa o leitor customizado com
+// menu de comandos e histórico por seta; fora disso (pipe/script), usa o
+// readline padrão — sem menu (não faz sentido sem teclado de verdade), mas
+// mantém o comportamento de sempre, sem risco de regressão em automação.
+async function nextQuestion({ interactive, lines, history }) {
+  if (interactive) {
+    // readInteractiveLine já desenha o prompt "ryuki> " sozinho.
+    const line = await readInteractiveLine(history);
+    return line === null ? { done: true, value: "" } : { done: false, value: line };
+  }
+
+  process.stdout.write("ryuki> ");
+  const { value, done } = await lines.next();
+  return { done, value: value || "" };
+}
+
 export async function runRepl({ fast: initialFast = false } = {}) {
   const state = { fast: initialFast };
   // Histórico persistente só faz sentido (e só é seguro salvar) em sessão
-  // interativa de verdade — em modo não-TTY (pipe, script) rl.history fica
-  // vazio e sobrescreveria o histórico salvo com nada.
+  // interativa de verdade — em modo não-TTY (pipe, script) o histórico fica
+  // vazio e sobrescreveria o salvo com nada.
   const interactive = process.stdin.isTTY;
   const history = interactive ? loadHistory() : [];
   const rl = createInterface({ input: process.stdin, output: process.stdout, history, historySize: 200, completer });
@@ -80,17 +97,25 @@ export async function runRepl({ fast: initialFast = false } = {}) {
   console.log(welcomeBox({ firecrawlOk: !!firecrawlKey, groqOk: !!groqKey, fast: state.fast, width: boxWidth() }));
   console.log("");
 
+  // A configuração de chaves usa o readline padrão (é só texto simples).
+  // A partir daqui, sessão interativa passa a usar o leitor com menu.
+  if (interactive) {
+    rl.close();
+    enableRawMode();
+  }
+
   while (true) {
-    process.stdout.write("ryuki> ");
-    const { value, done } = await lines.next();
-    if (done) break; // stdin fechou (ex: Ctrl+D ou entrada não interativa)
+    const { done, value } = await nextQuestion({ interactive, lines, history });
+    if (done) break; // stdin fechou ou Ctrl+C
 
     const question = value.trim();
     if (!question) continue;
-    // O readline já adicionou "question" a rl.history; se for comando de
-    // saída, não persiste — não é uma pergunta de verdade.
-    if (interactive && !EXIT_COMMANDS.has(question.toLowerCase())) saveHistory(rl.history);
     if (EXIT_COMMANDS.has(question.toLowerCase())) break;
+
+    if (interactive) {
+      history.unshift(question);
+      saveHistory(history);
+    }
 
     console.log("");
 
@@ -115,6 +140,8 @@ export async function runRepl({ fast: initialFast = false } = {}) {
     }
   }
 
-  rl.close();
+  if (interactive) disableRawMode();
+  else rl.close();
+
   console.log("Até mais!");
 }

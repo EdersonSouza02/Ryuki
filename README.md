@@ -41,9 +41,11 @@ Dentro do REPL, qualquer linha que começa com `/` é tratada como comando (nunc
 | `/gear`         | Alterna pro modelo padrão (mais completo), pro resto da sessão |
 | `/version`      | Mostra a versão instalada                               |
 
-Digite `/` e aperte Tab duas vezes pra ver a lista de comandos sem precisar decorar. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
+Num terminal de verdade, digitar `/` já abre um menu com os comandos na hora — navega com ↑/↓, filtra digitando mais letras (ex: `/ku` deixa só `/kunai`), Enter escolhe e Esc cancela. Perguntas de verdade — mesmo que comecem com uma palavra parecida (ex: "config do roteador") — continuam indo pra busca normal, sem conflito.
 
-Digite `sair`, `exit` ou `quit` pra encerrar. O histórico de perguntas fica salvo entre sessões (seta pra cima recupera perguntas antigas).
+Fora do menu (ou seja, quando a linha não começa com `/`), ↑/↓ recupera perguntas antigas do histórico, que fica salvo entre sessões.
+
+Digite `sair`, `exit` ou `quit` pra encerrar.
 
 ## Instalação permanente
 
