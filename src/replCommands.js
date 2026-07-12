@@ -2,6 +2,9 @@ import { runConfigCommand } from "./configCommand.js";
 import { VERSION } from "./version.js";
 import { bold, gray } from "./format.js";
 import { selectModel } from "./interactiveInput.js";
+import { searchHistory } from "./conversation.js";
+import { clearCache } from "./cache.js";
+import { setSetting, printConfig } from "./sessionConfig.js";
 
 // Fonte única pros comandos: alimenta tanto o /help quanto o autocomplete
 // (Tab) do REPL, pra não ter duas listas que podem ficar desalinhadas.
@@ -9,6 +12,10 @@ export const COMMANDS = [
   { name: "/config", description: "mostra quais chaves estão configuradas" },
   { name: "/config reset", description: "apaga as chaves salvas" },
   { name: "/model", description: "escolhe entre kunai ou gear" },
+  { name: "/search", description: "busca no histórico de conversas" },
+  { name: "/continue", description: "continua a resposta anterior" },
+  { name: "/set", description: "configura temperatura, tokens, idioma" },
+  { name: "/clear-cache", description: "limpa o cache de buscas" },
   { name: "/version", description: "mostra a versão instalada" },
   { name: "/help", description: "mostra essa lista" },
 ];
@@ -55,6 +62,43 @@ export async function handleCommand(question, state) {
       }
       break;
     }
+    case "/search": {
+      const query = args.join(" ");
+      if (!query) {
+        console.log(gray("Uso: /search termo"));
+        break;
+      }
+      const results = searchHistory(query);
+      if (results.length === 0) {
+        console.log("Nenhuma conversa encontrada com esse termo.");
+      } else {
+        console.log(bold(`Encontrados ${results.length} resultados:`));
+        console.log("");
+        results.forEach((entry, i) => {
+          console.log(`${i + 1}. ${entry.timestamp.split("T")[0]} ${entry.timestamp.split("T")[1].split(".")[0]}`);
+          console.log(gray(`   P: ${entry.question.slice(0, 60)}...`));
+          console.log(gray(`   R: ${entry.response.slice(0, 60)}...`));
+        });
+      }
+      break;
+    }
+    case "/continue":
+      console.log(gray("Use /continue e pressione Enter para solicitar continuação da última resposta."));
+      state.continuePrevious = true;
+      break;
+    case "/set": {
+      const setting = args.join("=");
+      if (!setting) {
+        printConfig(state.sessionConfig);
+      } else {
+        setSetting(state.sessionConfig, setting);
+      }
+      break;
+    }
+    case "/clear-cache":
+      clearCache();
+      console.log(gray("Cache de buscas limpo."));
+      break;
     case "/version":
       console.log(VERSION);
       break;

@@ -8,6 +8,12 @@ import { withSpinner, startSpinner } from "./spinner.js";
 import { loadHistory, saveHistory } from "./history.js";
 import { handleCommand, completer } from "./replCommands.js";
 import { readInteractiveLine, enableRawMode, disableRawMode } from "./interactiveInput.js";
+import { saveConversation } from "./conversation.js";
+import { getCachedResults, cacheResults } from "./cache.js";
+import { createSessionConfig } from "./sessionConfig.js";
+import { retryWithBackoff } from "./retry.js";
+import { highlightCode } from "./highlight.js";
+import { formatTable } from "./tableFormatter.js";
 
 function startTimer() {
   const startTime = Date.now();
@@ -92,10 +98,13 @@ async function nextQuestion({ interactive, lines, history }) {
 }
 
 export async function runRepl({ fast: initialFast = false } = {}) {
-  const state = { fast: initialFast };
-  // Histórico persistente só faz sentido (e só é seguro salvar) em sessão
-  // interativa de verdade — em modo não-TTY (pipe, script) o histórico fica
-  // vazio e sobrescreveria o salvo com nada.
+  const state = {
+    fast: initialFast,
+    sessionConfig: createSessionConfig(),
+    continuePrevious: false,
+    lastResponse: "",
+  };
+
   const interactive = process.stdin.isTTY;
   const history = interactive ? loadHistory() : [];
   const rl = createInterface({ input: process.stdin, output: process.stdout, history, historySize: 200, completer });
@@ -136,24 +145,35 @@ export async function runRepl({ fast: initialFast = false } = {}) {
     }
 
     try {
-      const getTimer = startTimer();
-      const timerInterval = setInterval(getTimer, 1000);
+      let results = getCachedResults(question);
 
-      try {
-        const results = await withSpinner("Buscando...", () => search(question, firecrawlKey));
-        clearInterval(timerInterval);
-        console.log("");
+      if (!results) {
+        const getTimer = startTimer();
+        const timerInterval = setInterval(getTimer, 1000);
 
-        if (results.length === 0) {
-          console.log("Nenhum resultado encontrado.\n");
-          continue;
+        try {
+          results = await withSpinner("Buscando...", () =>
+            retryWithBackoff(() => search(question, firecrawlKey), { maxRetries: 2 })
+          );
+          cacheResults(question, results);
+          clearInterval(timerInterval);
+          console.log("");
+        } finally {
+          clearInterval(timerInterval);
         }
-
-        const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
-        if (usedSources) printResults(results);
-      } finally {
-        clearInterval(timerInterval);
+      } else {
+        console.log(gray("(resultado em cache)"));
       }
+
+      if (results.length === 0) {
+        console.log("Nenhum resultado encontrado.\n");
+        continue;
+      }
+
+      const usedSources = await answerAndPrint(question, results, groqKey, { fast: state.fast });
+      saveConversation(question, "resposta salva", { fast: state.fast });
+
+      if (usedSources) printResults(results);
     } catch (err) {
       console.error(`Erro: ${err.message}\n`);
     }
