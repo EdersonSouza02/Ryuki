@@ -54,10 +54,6 @@ ryuki
 
 **Acesse a documentação completa em:** [**ryuki.dev**](https://ryuki.dev)
 
-Lá você encontra:
-- [Getting Started](https://ryuki.dev/getting-started) — Setup das chaves, instalação, comandos
-- [Releases](https://ryuki.dev/releases) — Histórico de versões e features
-
 ## 💻 Modo Interativo
 
 ```bash
@@ -113,18 +109,6 @@ cd ryuki
 npm install
 node bin/ryuki.js
 ```
-
-## 📦 Como Funciona
-
-1. Você pergunta no terminal
-2. Ryuki busca na web via Firecrawl
-3. Groq sintetiza uma resposta em IA
-4. Respostas em streaming (tempo real)
-5. Mostra fontes usadas [1], [2], etc.
-
-## 🤝 Contribuições
-
-Contribuições são bem-vindas! Abra uma [issue](https://github.com/EdersonSouza02/ryuki/issues) ou faça um [pull request](https://github.com/EdersonSouza02/ryuki/pulls).
 
 ## 📄 Licença
 
