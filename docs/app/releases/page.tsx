@@ -1,4 +1,10 @@
 import Link from 'next/link';
+import { VersionText } from '../components/VersionBadge';
+
+async function LatestVersionText() {
+  const version = await VersionText();
+  return <p className="text-slate-400 mb-2">Último (v{version})</p>;
+}
 
 export default function Releases() {
   return (
@@ -127,7 +133,7 @@ export default function Releases() {
           <h2 className="text-2xl font-bold mb-4">Download</h2>
           <div className="space-y-3">
             <div>
-              <p className="text-slate-400 mb-2">Último (v0.3.4)</p>
+              <LatestVersionText />
               <a
                 href="https://www.npmjs.com/package/ryuki"
                 className="inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition"

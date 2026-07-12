@@ -1,4 +1,4 @@
-async function getLatestVersion() {
+export async function getLatestVersion() {
   try {
     const res = await fetch('https://registry.npmjs.org/ryuki/latest', {
       next: { revalidate: 3600 }, // cache por 1 hora
@@ -19,4 +19,9 @@ export async function VersionBadge() {
       <div className="text-slate-400 mt-2">Latest Version</div>
     </div>
   );
+}
+
+export async function VersionText() {
+  const version = await getLatestVersion();
+  return version;
 }
