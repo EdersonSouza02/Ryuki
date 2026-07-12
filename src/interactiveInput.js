@@ -1,9 +1,8 @@
 import { emitKeypressEvents } from "node:readline";
 import { COMMANDS } from "./replCommands.js";
-import { bold, gray, visibleLength } from "./format.js";
-import { cyan } from "./colorProvider.js"; // usa cores do tema
+import { bold, cyan, gray } from "./format.js";
 
-const PROMPT_TEXT = "ryuki> ";
+const PROMPT = "ryuki> ";
 
 function matchingCommands(input) {
   if (!input.startsWith("/")) return [];
@@ -11,8 +10,7 @@ function matchingCommands(input) {
 }
 
 function render(input, matches, selected) {
-  const coloredPrompt = cyan(PROMPT_TEXT);
-  process.stdout.write(`\r\x1b[0J${coloredPrompt}${input}`);
+  process.stdout.write(`\r\x1b[0J${PROMPT}${input}`);
 
   if (matches.length > 0) {
     const menu = matches
@@ -25,7 +23,7 @@ function render(input, matches, selected) {
       .join("\n");
     process.stdout.write(`\n${menu}`);
     process.stdout.write(`\x1b[${matches.length}A`);
-    process.stdout.write(`\r\x1b[${visibleLength(coloredPrompt) + input.length}C`);
+    process.stdout.write(`\r\x1b[${(PROMPT + input).length}C`);
   }
 }
 

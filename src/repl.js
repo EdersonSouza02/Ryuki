@@ -15,9 +15,6 @@ import { retryWithBackoff } from "./retry.js";
 import { highlightCode } from "./highlight.js";
 import { formatTable } from "./tableFormatter.js";
 import { printError } from "./errors.js";
-import { loadTheme, setTheme } from "./themes.js";
-import { setThemeForSession } from "./colorProvider.js";
-import { colorize } from "./colorProvider.js";
 
 function startTimer() {
   const startTime = Date.now();
@@ -60,7 +57,7 @@ export async function answerAndPrint(question, results, groqKey, { fast = false 
         started = true;
       }
       if (!printedHeader) {
-        console.log(colorize.highlight(bold("✨ Resposta")));
+        console.log(bold("✨ Resposta"));
         console.log("");
         printedHeader = true;
       }
@@ -102,10 +99,6 @@ async function nextQuestion({ interactive, lines, history }) {
 }
 
 export async function runRepl({ fast: initialFast = false } = {}) {
-  // Carrega o tema ao iniciar
-  const theme = loadTheme();
-  setThemeForSession(theme);
-
   const state = {
     fast: initialFast,
     sessionConfig: createSessionConfig(),

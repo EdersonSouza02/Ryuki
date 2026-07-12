@@ -1,16 +1,12 @@
-// Re-exporta funções de colorização que usam o tema ativo
-// Se colorProvider não estiver inicializado, usa cores padrão
-import { colorize as themeColors, bold as themeBold, cyan as themeCyan, gray as themeGray } from "./colorProvider.js";
-
 const COLOR = process.stdout.isTTY;
 
 function color(code, text) {
   return COLOR ? `\x1b[${code}m${text}\x1b[0m` : text;
 }
 
-export const bold = themeBold;
-export const cyan = themeCyan;
-export const gray = themeGray;
+export const bold = (text) => color("1", text);
+export const cyan = (text) => color("35", text); // magenta (solarized)
+export const gray = (text) => color("90", text);
 
 export function visibleLength(text) {
   return text.replace(/\x1b\[[0-9;]*m/g, "").length;
@@ -32,42 +28,24 @@ export function createStreamWriter(width) {
   let column = 0;
   let buffer = "";
 
-  function writeWord(word) {
-    if (!word) return;
-    if (column > 0 && column + word.length > width) {
-      process.stdout.write("\n");
-      column = 0;
-    }
-    process.stdout.write(word);
-    column += word.length;
-  }
-
-  function writeWhitespace(ws) {
-    if (ws.includes("\n")) {
-      process.stdout.write("\n".repeat((ws.match(/\n/g) || []).length));
-      column = 0;
-    } else {
-      process.stdout.write(" ");
-      column += 1;
-    }
-  }
-
   return {
-    write(delta) {
-      buffer += delta;
-      let match;
-      while ((match = buffer.match(/^(\S+)(\s+)/))) {
-        writeWord(match[1]);
-        writeWhitespace(match[2]);
-        buffer = buffer.slice(match[0].length);
+    write(chunk) {
+      buffer += chunk;
+      const words = buffer.split(" ");
+      buffer = words.pop() || "";
+
+      for (const word of words) {
+        const len = visibleLength(word) + 1;
+        if (column + len > width) {
+          process.stdout.write("\n");
+          column = 0;
+        }
+        process.stdout.write(word + " ");
+        column += len;
       }
     },
     end() {
-      if (buffer) {
-        writeWord(buffer);
-        buffer = "";
-      }
-      process.stdout.write("\n");
+      if (buffer) process.stdout.write(buffer);
     },
   };
 }
